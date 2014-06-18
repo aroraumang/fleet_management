@@ -1,18 +1,18 @@
 {
-    "name" : "Fleet Management",
-    "version" : "2.2.0.2",
-    "author" : "Sharoon Thomas",
+    "name": "Fleet Management",
+    "version": "2.2.0.2",
+    "author": "Sharoon Thomas",
     'email': 'sharoon.thomas@openlabs.co.in',
     'website': 'http://www.openlabs.co.in/',
-    "category" : "Generic",
+    "category": "Generic",
     "description": "A Module for Fleet Management",
-    "depends" : [
+    "depends": [
         "company",
         "product",
         "account",
         "purchase",
     ],
-    "xml" : [
+    "xml": [
         "asset_view.xml",
         "product.xml",
         "purchase_view.xml",

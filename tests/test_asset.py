@@ -1,11 +1,12 @@
-#This file is part of Tryton.  The COPYRIGHT file at the top level of
-#this repository contains the full copyright notices and license terms.
+# This file is part of Tryton.  The COPYRIGHT file at the top level of
+# this repository contains the full copyright notices and license terms.
 """Test Asset for Fleet Management System."""
 
-import sys, os
+import sys
+import os
 
-DIR = os.path.abspath(os.path.normpath(os.path.join(__file__,
-    '..', '..', '..', '..', '..', 'trytond')))
+DIR = os.path.abspath(os.path.normpath(os.path.join(
+    __file__, '..', '..', '..', '..', '..', 'trytond')))
 if os.path.isdir(DIR):
     sys.path.insert(0, os.path.dirname(DIR))
 
@@ -46,7 +47,7 @@ class AssetTestCase(unittest.TestCase):
         Create a new asset.
         """
 
-        with Transaction().start(DB_NAME, USER, CONTEXT) as transaction:
+        with Transaction().start(DB_NAME, USER, CONTEXT):
 
             uom_id, = self.uom_obj.search(
                 [('name', '=', 'Kilometer')]
@@ -65,12 +66,12 @@ class AssetTestCase(unittest.TestCase):
         Create an asset without defining meter_unit and raise exception
         """
 
-        with Transaction().start(DB_NAME, USER, CONTEXT) as transaction:
+        with Transaction().start(DB_NAME, USER, CONTEXT):
 
-            self.assertRaises(Exception, self.asset_obj.create,
-                {
+            self.assertRaises(Exception, self.asset_obj.create, {
                 'code': 'Bus',
-                })
+            })
+
 
 def suite():
     """Create a test suite.
@@ -78,7 +79,7 @@ def suite():
     suite = trytond.tests.test_tryton.suite()
 
     suite.addTests(unittest.TestLoader().loadTestsFromTestCase(
-         AssetTestCase))
+        AssetTestCase))
     return suite
 
 if __name__ == '__main__':

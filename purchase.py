@@ -1,5 +1,5 @@
-#This file is part of Tryton.  The COPYRIGHT file at the top level of
-#this repository contains the full copyright notices and license terms.
+# This file is part of Tryton.  The COPYRIGHT file at the top level of
+# this repository contains the full copyright notices and license terms.
 
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pool import Pool
@@ -19,30 +19,20 @@ class PurchaseLine(ModelSQL, ModelView):
         'get_product_fleet_type'
         )
 
-    asset = fields.Many2One("fleet.asset", "Asset",
-        states={
-            'invisible': Not(Equal(Eval('product_fleet_type'), 'fuel')),
-            'required': Equal(Eval('product_fleet_type'), 'fuel')
-            },
-        depends=['product_fleet_type']
-        )
+    asset = fields.Many2One("fleet.asset", "Asset", states={
+        'invisible': Not(Equal(Eval('product_fleet_type'), 'fuel')),
+        'required': Equal(Eval('product_fleet_type'), 'fuel')
+    }, depends=['product_fleet_type'])
 
-    meter_reading = fields.BigInteger("Meter Reading",
-        states={
-            'invisible': Not(Equal(Eval('product_fleet_type'),'fuel')),
-            'required': (Eval('product_fleet_type') == 'fuel')
-            },
-        depends=['product_fleet_type']
-        )
+    meter_reading = fields.BigInteger("Meter Reading", states={
+        'invisible': Not(Equal(Eval('product_fleet_type'), 'fuel')),
+        'required': (Eval('product_fleet_type') == 'fuel')
+    }, depends=['product_fleet_type'])
 
     fuel_efficiency = fields.Function(
-        fields.Float("Fuel Efficiency",
-        states={
-            'invisible': Not(Equal(Eval('product_fleet_type'),'fuel')),
-            },
-        depends=['product_fleet_type']),
-        'get_fuel_efficiency'
-        )
+        fields.Float("Fuel Efficiency", states={
+            'invisible': Not(Equal(Eval('product_fleet_type'), 'fuel')),
+        }, depends=['product_fleet_type']), 'get_fuel_efficiency')
 
     def get_product_fleet_type(self, ids, name):
         """Get the product type.
@@ -60,17 +50,19 @@ class PurchaseLine(ModelSQL, ModelView):
             efficiency = 0.00
             previous_line_ids = self.search([
                 ('asset', '=', purchase_line.asset.id),
-                ('purchase.purchase_date', '<', purchase_line.purchase.purchase_date)
+                ('purchase.purchase_date', '<',
+                    purchase_line.purchase.purchase_date)
                 ], limit=1)
             if previous_line_ids:
                 previous_line = self.browse(previous_line_ids[0])
-                efficiency = (purchase_line.meter_reading - \
-                    previous_line.meter_reading) / purchase_line.quantity
+                efficiency = (purchase_line.meter_reading - (
+                    previous_line.meter_reading)) / purchase_line.quantity
             res[purchase_line.id] = efficiency
         return res
 
     def on_change_with_product_fleet_type(self, vals):
-        """Set the value of product_fleet_type so that the invisible and 
+        """
+        Set the value of product_fleet_type so that the invisible and
         required property may be set
         """
         product_obj = Pool().get('product.product')
@@ -118,7 +110,7 @@ class FuelEfficiencyReport(Wizard):
             },
         },
         'print': {
-            'result':{
+            'result': {
                 'type': 'print',
                 'report': 'purchase.line.fuel_efficiency',
                 'state': 'end',
@@ -145,9 +137,7 @@ class GenerateFuelEfficiencyReport(Report):
             of the report
         :param localcontext: the context used to parse the report
         """
-        purchase_obj = Pool().get('purchase.purchase')
         purchase_line_obj = Pool().get('purchase.line')
-        res = {}
 
         purchase_line_ids = purchase_line_obj.search([
             ('purchase.purchase_date', '>=',  datas['form']['begin_date']),
@@ -156,11 +146,12 @@ class GenerateFuelEfficiencyReport(Report):
             ('product.fleet_management_type', '=', 'fuel')
             ])
 
-        localcontext['purchase_lines'] = purchase_line_obj.browse(purchase_line_ids)
+        localcontext['purchase_lines'] = \
+            purchase_line_obj.browse(purchase_line_ids)
         localcontext['begin_date'] = datas['form']['begin_date']
         localcontext['end_date'] = datas['form']['end_date']
 
-        return super(GenerateFuelEfficiencyReport, self).parse(report,
-            objects, datas, localcontext)
+        return super(GenerateFuelEfficiencyReport, self).parse(
+            report, objects, datas, localcontext)
 
 GenerateFuelEfficiencyReport()

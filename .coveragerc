@@ -1,0 +1,5 @@
+[run]
+source = trytond.modules.fleet_management
+
+[report]
+omit = */tests/*, */fabfile.py

@@ -1,5 +1,5 @@
-#This file is part of Tryton.  The COPYRIGHT file at the top level of
-#this repository contains the full copyright notices and license terms.
+# This file is part of Tryton.  The COPYRIGHT file at the top level of
+# this repository contains the full copyright notices and license terms.
 
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pool import Pool
@@ -15,15 +15,18 @@ class Asset(ModelSQL, ModelView):
     _description = "Fleet Management Asset"
 
     code = fields.Char('Code', required=True, select=1)
-    meter_unit =  fields.Many2One("product.uom", "Meter Unit", required=True,
-        domain=[('category.name', '=', 'Length')])
+    meter_unit = fields.Many2One(
+        "product.uom", "Meter Unit", required=True,
+        domain=[('category.name', '=', 'Length')]
+    )
     status = fields.Selection([
         ('Active', 'Active'),
         ('Out of Service', 'Out of Service'),
         ], "Status", readonly=True, select=1)
-    average_fuel_efficiency = fields.Function(
-        fields.Numeric("Average Fuel Efficiency", loading="lazy"),
-            'get_avg_efficiency')
+    average_fuel_efficiency = fields.Function(fields.Numeric(
+        "Average Fuel Efficiency", loading="lazy"),
+        'get_avg_efficiency'
+    )
 
     # Specifications
     year = fields.Integer("Year")
@@ -75,11 +78,13 @@ class Asset(ModelSQL, ModelView):
                 first_line = purchase_line_obj.browse(
                     purchase_line_ids[0])
                 if len(purchase_line_ids) == 1:
-                    avg_efficiency = (first_line.meter_reading - \
-                        0)/Decimal(str(purchase_line.quantity))
+                    avg_efficiency = (first_line.meter_reading - 0)/Decimal(
+                        str(purchase_line.quantity)
+                    )
                 else:
-                    avg_efficiency = (first_line.meter_reading - \
-                        last_line.meter_reading) / (sum_quantity)
+                    avg_efficiency = (
+                        first_line.meter_reading - last_line.meter_reading
+                    ) / (sum_quantity)
             else:
                 avg_efficiency = 0
             res[asset.id] = avg_efficiency

@@ -9,9 +9,10 @@
 """
 from __future__ import with_statement
 
-import sys, os
-DIR = os.path.abspath(os.path.normpath(os.path.join(__file__,
-    '..', '..', '..', '..', '..', 'trytond')))
+import sys
+import os
+DIR = os.path.abspath(os.path.normpath(os.path.join(
+    __file__, '..', '..', '..', '..', '..', 'trytond')))
 if os.path.isdir(DIR):
     sys.path.insert(0, os.path.dirname(DIR))
 
@@ -61,21 +62,19 @@ class FuelTestCase(unittest.TestCase):
 
         wiz_id = self.create_chart_account_obj.create()
         self.create_chart_account_obj.execute(wiz_id, {}, 'account')
-        self.create_chart_account_obj.execute(wiz_id,
-            {
-                'form': {
-                    'account_template': account_template,
-                    'company': company,
-                }
-            }, 'create_account'
-        )
+        self.create_chart_account_obj.execute(wiz_id, {
+            'form': {
+                'account_template': account_template,
+                'company': company,
+            }
+        }, 'create_account')
 
     def test_0010_average_efficiency(self):
         """
         Test to check the functional field 'average_fuel_efficiency'
         """
 
-        with Transaction().start(DB_NAME, USER, CONTEXT) as transaction:
+        with Transaction().start(DB_NAME, USER, CONTEXT):
 
             payment_term_id = self.payment_term_obj.create({
                 'name': 'Cash',
@@ -111,10 +110,6 @@ class FuelTestCase(unittest.TestCase):
                 })
             asset_id3 = self.asset_obj.create({
                 'code': 'bike',
-                })
-
-            uom_category_id = self.uom_category_obj.create({
-                'name': 'Volume',
                 })
 
             default_uom_id, = self.uom_obj.search([
@@ -218,4 +213,3 @@ def suite():
 
 if __name__ == '__main__':
     unittest.TextTestRunner(verbosity=2).run(suite())
-
